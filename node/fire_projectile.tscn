@@ -1,0 +1,129 @@
+[gd_scene load_steps=15 format=3 uid="uid://dexy8d36svgw4"]
+
+[ext_resource type="Script" path="res://script/projectile.gd" id="1_lur0e"]
+[ext_resource type="Script" path="res://script/resource/flammable.gd" id="2_4ejtv"]
+[ext_resource type="Texture2D" uid="uid://cux1wq0mspqfu" path="res://assets/fire_particle64.png" id="2_a8ftw"]
+[ext_resource type="Texture2D" uid="uid://c8udkkdwjlx4a" path="res://assets/fire_particle16-1.png" id="3_6twxp"]
+[ext_resource type="Texture2D" uid="uid://di0b8b4uttxb5" path="res://assets/fire_particle16-4.png" id="4_23cp3"]
+[ext_resource type="Texture2D" uid="uid://bbacewxowvayh" path="res://assets/fire_particle16-3.png" id="5_fy051"]
+[ext_resource type="Texture2D" uid="uid://i5t1t2jxxk7m" path="res://assets/fire_particle16-2.png" id="6_pw0hc"]
+
+[sub_resource type="Resource" id="Resource_45pa2"]
+script = ExtResource("2_4ejtv")
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_6xudp"]
+radius = 25.0799
+
+[sub_resource type="Curve" id="Curve_u4ngk"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_xtxpp"]
+particle_flag_disable_z = true
+gravity = Vector3(0, -100, 0)
+color = Color(0.960847, 0.346636, 5.77569e-07, 1)
+hue_variation_min = -0.08
+hue_variation_max = 0.03
+turbulence_enabled = true
+turbulence_noise_speed = Vector3(1, 0, 0)
+turbulence_noise_speed_random = 3.21
+
+[sub_resource type="Animation" id="Animation_vrw70"]
+resource_name = "new_animation"
+length = 4.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:rotation")
+tracks/0/interp = 3
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1, 2, 3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [0.0, 1.5708, 3.14159, 4.71239]
+}
+
+[sub_resource type="Animation" id="Animation_df743"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_xrjs6"]
+_data = {
+"RESET": SubResource("Animation_df743"),
+"new_animation": SubResource("Animation_vrw70")
+}
+
+[node name="FireProjectile" type="Node2D"]
+position = Vector2(85, 40)
+script = ExtResource("1_lur0e")
+elemental = SubResource("Resource_45pa2")
+metadata/elemental = 1
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_mask = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("CircleShape2D_6xudp")
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="."]
+amount = 10
+draw_order = 1
+texture = ExtResource("3_6twxp")
+emission_shape = 1
+emission_sphere_radius = 20.0
+gravity = Vector2(0, -10)
+scale_amount_curve = SubResource("Curve_u4ngk")
+
+[node name="CPUParticles2D4" type="CPUParticles2D" parent="."]
+amount = 10
+draw_order = 1
+texture = ExtResource("4_23cp3")
+emission_shape = 1
+emission_sphere_radius = 20.0
+gravity = Vector2(0, -10)
+scale_amount_curve = SubResource("Curve_u4ngk")
+
+[node name="CPUParticles2D3" type="CPUParticles2D" parent="."]
+amount = 10
+draw_order = 1
+texture = ExtResource("5_fy051")
+emission_shape = 1
+emission_sphere_radius = 20.0
+gravity = Vector2(0, -10)
+scale_amount_curve = SubResource("Curve_u4ngk")
+
+[node name="CPUParticles2D2" type="CPUParticles2D" parent="."]
+amount = 10
+draw_order = 1
+texture = ExtResource("6_pw0hc")
+emission_shape = 1
+emission_sphere_radius = 20.0
+gravity = Vector2(0, -10)
+scale_amount_curve = SubResource("Curve_u4ngk")
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+amount = 16
+process_material = SubResource("ParticleProcessMaterial_xtxpp")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_a8ftw")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_xrjs6")
+}
+
+[connection signal="body_entered" from="Area2D" to="." method="_on_flamable_body_entered"]
