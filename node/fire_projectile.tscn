@@ -1,15 +1,11 @@
-[gd_scene load_steps=15 format=3 uid="uid://dexy8d36svgw4"]
+[gd_scene load_steps=13 format=3 uid="uid://dexy8d36svgw4"]
 
 [ext_resource type="Script" path="res://script/projectile.gd" id="1_lur0e"]
-[ext_resource type="Script" path="res://script/resource/flammable.gd" id="2_4ejtv"]
 [ext_resource type="Texture2D" uid="uid://cux1wq0mspqfu" path="res://assets/fire_particle64.png" id="2_a8ftw"]
 [ext_resource type="Texture2D" uid="uid://c8udkkdwjlx4a" path="res://assets/fire_particle16-1.png" id="3_6twxp"]
 [ext_resource type="Texture2D" uid="uid://di0b8b4uttxb5" path="res://assets/fire_particle16-4.png" id="4_23cp3"]
 [ext_resource type="Texture2D" uid="uid://bbacewxowvayh" path="res://assets/fire_particle16-3.png" id="5_fy051"]
 [ext_resource type="Texture2D" uid="uid://i5t1t2jxxk7m" path="res://assets/fire_particle16-2.png" id="6_pw0hc"]
-
-[sub_resource type="Resource" id="Resource_45pa2"]
-script = ExtResource("2_4ejtv")
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_6xudp"]
 radius = 25.0799
@@ -69,8 +65,7 @@ _data = {
 [node name="FireProjectile" type="Node2D"]
 position = Vector2(85, 40)
 script = ExtResource("1_lur0e")
-elemental = SubResource("Resource_45pa2")
-metadata/elemental = 1
+lifetime = 10.0
 
 [node name="Area2D" type="Area2D" parent="."]
 collision_mask = 3
@@ -126,4 +121,8 @@ libraries = {
 "": SubResource("AnimationLibrary_xrjs6")
 }
 
+[node name="Timer" type="Timer" parent="."]
+one_shot = true
+
 [connection signal="body_entered" from="Area2D" to="." method="_on_flamable_body_entered"]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

@@ -1,7 +1,14 @@
-[gd_resource type="Theme" load_steps=2 format=3 uid="uid://bf7qgtw7s4el4"]
+[gd_resource type="Theme" load_steps=3 format=3 uid="uid://bf7qgtw7s4el4"]
 
 [ext_resource type="FontFile" uid="uid://bqet6q4ip7fts" path="res://assets/poco/Poco.ttf" id="1_t7x1j"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_4y1ad"]
 
 [resource]
 default_font = ExtResource("1_t7x1j")
 default_font_size = 10
+Label/colors/font_shadow_color = Color(0, 0, 0, 1)
+Label/constants/shadow_offset_x = 1
+Label/constants/shadow_offset_y = 1
+Label/constants/shadow_outline_size = 1
+Label/styles/normal = SubResource("StyleBoxEmpty_4y1ad")

@@ -1,0 +1,51 @@
+[gd_scene load_steps=5 format=3 uid="uid://64sd1i54kmhf"]
+
+[ext_resource type="Texture2D" uid="uid://brnbxvia6dtxi" path="res://assets/lightning.png" id="1_04lb6"]
+[ext_resource type="Script" path="res://script/projectile.gd" id="1_cryp5"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_guvg4"]
+size = Vector2(38, 8)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_fb7lx"]
+lifetime_randomness = 0.42
+particle_flag_disable_z = true
+inherit_velocity_ratio = 0.189
+direction = Vector3(0, -1, 0)
+initial_velocity_min = 72.29
+initial_velocity_max = 122.9
+gravity = Vector3(0, 98, 0)
+turbulence_enabled = true
+turbulence_noise_strength = 1.63
+turbulence_noise_scale = 5.061
+
+[node name="LightningProjectile" type="Node2D"]
+script = ExtResource("1_cryp5")
+destroy_on_impact = true
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_04lb6")
+
+[node name="Sprite2D2" type="Sprite2D" parent="."]
+position = Vector2(-32, 0)
+scale = Vector2(1, 0.600001)
+texture = ExtResource("1_04lb6")
+
+[node name="Sprite2D3" type="Sprite2D" parent="."]
+position = Vector2(-51, 0)
+scale = Vector2(-0.200333, 0.500319)
+texture = ExtResource("1_04lb6")
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_mask = 131
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("RectangleShape2D_guvg4")
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+amount = 20
+process_material = SubResource("ParticleProcessMaterial_fb7lx")
+
+[node name="Timer" type="Timer" parent="."]
+one_shot = true
+
+[connection signal="body_entered" from="Area2D" to="." method="_on_conductive_body_entered"]

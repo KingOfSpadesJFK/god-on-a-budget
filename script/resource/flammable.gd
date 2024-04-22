@@ -1,10 +1,23 @@
 extends Elemental
 class_name Flammable
 
-func _impact(_body: Node2D, burn_time) -> void:
+@export var burn_time = 5.0
+@export var spread = 1.0
+
+func _impact(_body: Node2D) -> void:
 	# Instantiate fire scene and add it to the node
 	var fire_scene = preload("res://node/fire.tscn")
 	var fire = fire_scene.instantiate()
+
+	for child in fire.get_children():
+		if child is CPUParticles2D:
+			child.amount = spread
+			child.emission_sphere_radius = spread
+		if child is GPUParticles2D:
+			child.amount = spread * 2
+			if child.process_material is ParticleProcessMaterial:
+				child.process_material.emission_sphere_radius = spread
+
 	_body.add_child(fire)
 
 	# Wait for the burn time to pass

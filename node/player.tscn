@@ -1,0 +1,55 @@
+[gd_scene load_steps=8 format=3 uid="uid://cqjo6g66ejlhb"]
+
+[ext_resource type="Script" path="res://script/player.gd" id="1_ihd8c"]
+[ext_resource type="Script" path="res://script/resource/player_stats.gd" id="2_dv3ta"]
+[ext_resource type="Texture2D" uid="uid://cw5hyi05f1n1h" path="res://assets/test-player.png" id="3_ub1eb"]
+[ext_resource type="Theme" uid="uid://bf7qgtw7s4el4" path="res://assets/theme.tres" id="4_5m226"]
+
+[sub_resource type="Resource" id="Resource_1snlf"]
+script = ExtResource("2_dv3ta")
+fire_power = 100.0
+lightning_power = 100.0
+air_power = 100.0
+health = 100.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qyhrp"]
+size = Vector2(20, 28)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ytx3a"]
+size = Vector2(12, 28)
+
+[node name="Player" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 131
+script = ExtResource("1_ihd8c")
+player_stats = SubResource("Resource_1snlf")
+metadata/flammable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 1)
+shape = SubResource("RectangleShape2D_qyhrp")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("3_ub1eb")
+
+[node name="Hitbox" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+position = Vector2(0, -1)
+shape = SubResource("RectangleShape2D_ytx3a")
+debug_color = Color(0.988344, 0, 0.303042, 0.42)
+
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
+auto_translate_mode = 1
+offset_left = -19.0
+offset_top = -30.0
+offset_right = 57.0
+offset_bottom = 10.0
+theme = ExtResource("4_5m226")
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_outline_size = 0
+text = "Hold (0)"
+
+[connection signal="area_entered" from="Hitbox" to="." method="_on_area_2d_area_entered"]
