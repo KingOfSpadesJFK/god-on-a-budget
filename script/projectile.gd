@@ -21,6 +21,11 @@ func _on_flamable_body_entered(body: Node2D) -> void:
 		var flammability = body.get_meta("flammability")
 		if flammability != null and flammability is Flammable:
 			flammability._impact(body)
+	elif (body.has_meta("explosibility")):
+		var explosible = body.get_meta("explosibility")
+		if explosible != null and explosible is Explosible:
+			explosible._impact(body)
+
 	_on_body_entered(body)
 
 
@@ -30,7 +35,7 @@ func _on_conductive_body_entered(body: Node2D) -> void:
 
 
 # Called when the child Area2D touches a body
-func _on_body_entered(body: Node) -> void:
+func _on_body_entered(_body: Node) -> void:
 	if destroy_on_impact:
 		queue_free()
 

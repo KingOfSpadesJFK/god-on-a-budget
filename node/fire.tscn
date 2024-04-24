@@ -1,6 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://bkjdsdnbsj1kp"]
+[gd_scene load_steps=7 format=3 uid="uid://bkjdsdnbsj1kp"]
 
 [ext_resource type="Texture2D" uid="uid://brqml0hvqy3co" path="res://assets/fire_particle8-1.png" id="1_jxqip"]
+[ext_resource type="Script" path="res://script/fire.gd" id="1_qff25"]
 [ext_resource type="Texture2D" uid="uid://bgr2jfsuh0duw" path="res://assets/fire_particle8-2.png" id="2_2qdiw"]
 [ext_resource type="Texture2D" uid="uid://dvju4hrh1dj7g" path="res://assets/fire_particle8-3.png" id="3_ka557"]
 
@@ -21,6 +22,7 @@ turbulence_noise_speed = Vector3(1, 0, 0)
 turbulence_noise_speed_random = 3.21
 
 [node name="Fire" type="Node2D"]
+script = ExtResource("1_qff25")
 
 [node name="CPUParticles2D" type="CPUParticles2D" parent="."]
 amount = 10

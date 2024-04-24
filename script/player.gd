@@ -1,4 +1,5 @@
 extends CharacterBody2D
+class_name Player
 
 const MAX_SPEED = 150
 const JUMP_VELOCITY = -400
@@ -22,19 +23,34 @@ var hold_elemental: ElementalState = ElementalState.NONE
 var player_state: PlayerState = PlayerState.IDLE
 var impulse = Vector2()
 
-@export var player_stats: PlayerStats
+@export var stats: PlayerStats
+
+
+func _input(event):
+	if event.is_action_pressed("player_jump"):
+		if is_on_floor():
+			player_state = PlayerState.JUMP
+			impulse = Vector2(0, JUMP_VELOCITY)
+		elif stats.power > 0 :
+			if player_state == PlayerState.FALL:
+				player_state = PlayerState.FLOAT
+			elif player_state == PlayerState.FLOAT:
+				player_state = PlayerState.FALL
+
 
 func _process(_delta: float):
 	# Flip the sprite.
 	if facing_direction:
 		$Sprite2D.flip_h = facing_direction < 0;
 
+	# Get player directions
 	$RichTextLabel.text = "Hold: " + str(snapped(hold_time, 0.01)) + "\n" + PlayerState.keys()[player_state]
 	direction = Input.get_axis("player_left", "player_right")
 	vert_direction = Input.get_axis("player_up", "player_down")
 	if direction:
 		facing_direction = direction
 
+	# Update player state
 	if player_state != PlayerState.JUMP:
 		if direction:
 			if is_on_floor():
@@ -51,44 +67,36 @@ func _process(_delta: float):
 			player_state = PlayerState.FALL
 		elif player_state != PlayerState.JUMP:
 			player_state = PlayerState.FALL
-	elif player_state == PlayerState.FLOAT and player_stats.air_power <= 0:
-		player_stats.air_power = 0
+	elif player_state == PlayerState.FLOAT and stats.power <= 0:
+		stats.power = 0
 		player_state = PlayerState.FALL
 
-	if Input.is_action_just_pressed("player_jump"):
-		if is_on_floor():
-			player_state = PlayerState.JUMP
-			impulse = Vector2(0, JUMP_VELOCITY)
-		elif player_stats.air_power > 0 :
-			if player_state == PlayerState.FALL:
-				velocity.y = 0
-				player_state = PlayerState.FLOAT
-			elif player_state == PlayerState.FLOAT:
-				player_state = PlayerState.FALL
-
+	# Using powers
 	if player_state == PlayerState.FLOAT:
-		player_stats.air_power -= FLOAT_COST * _delta
+		stats.power -= FLOAT_COST * _delta
 
 	if Input.is_action_just_pressed("player_fire") or Input.is_action_just_pressed("player_lightning"):
 		hold_time = 0.0
 
 	if Input.is_action_pressed("player_fire"):
 		hold_elemental = ElementalState.FIRE
-		hold_time += get_process_delta_time()
+		hold_time += 2 * _delta
 	elif Input.is_action_pressed("player_lightning"):
 		hold_elemental = ElementalState.LIGHTNING
-		hold_time += get_process_delta_time()
+		hold_time += 2 *_delta
 
 	if Input.is_action_just_released("player_fire"):
 		create_fire()
-		player_stats.fire_power -= FIRE_COST * hold_time
+		stats.power -= FIRE_COST * min(ceil(hold_time), 3)
 	elif Input.is_action_just_released("player_lightning"):
 		create_lightning()
-		player_stats.lightning_power -= LIGHTNING_COST * hold_time
+		stats.power -= LIGHTNING_COST * min(ceil(hold_time), 3)
 		
+
+# Creates multiple lightning blasts
 func create_lightning() -> void:
 	var scene = preload("res://node/lightning_projectile.tscn")
-	for i in range(-floor(hold_time), floor(hold_time) + 1):
+	for i in range(-min(floor(hold_time), 2), min(ceil(hold_time), 3)):
 		var instance = scene.instantiate()
 		var rotation_radians = i * PI / 12.0
 		var speed = 25*60
@@ -102,6 +110,8 @@ func create_lightning() -> void:
 		instance.position = position + Vector2(distance * cos(rotation_radians), distance * sin(rotation_radians)) * facing_direction
 		instance.velocity = add_vel + Vector2(speed * cos(rotation_radians), speed * sin(rotation_radians)) * Vector2(facing_direction, 1)
 		
+
+# Creates a fireball dependent on the size
 func create_fire() -> void:
 	var scene = preload("res://node/fire_projectile.tscn")
 	var instance = scene.instantiate()
@@ -112,8 +122,9 @@ func create_fire() -> void:
 	add_sibling(instance)
 	instance.position = position + Vector2(32, 0) * facing_direction
 	instance.velocity = add_vel + Vector2(75, 0) * Vector2(facing_direction, 1)
-	var inst_scale = max(hold_time, 0.25)
+	var inst_scale = min(floor(hold_time)+.25, 3)
 	instance.scale = Vector2(inst_scale, inst_scale)
+
 
 func _physics_process(delta):
 	# Add the gravity.
@@ -140,5 +151,6 @@ func _physics_process(delta):
 
 	move_and_slide()
 
-func _on_area_2d_area_entered(area: Area2D) -> void:
+
+func _on_area_2d_area_entered(_area: Area2D) -> void:
 	pass

@@ -1,11 +1,11 @@
-[gd_scene load_steps=17 format=3 uid="uid://ddqu5afg4nxbd"]
+[gd_scene load_steps=18 format=3 uid="uid://ddqu5afg4nxbd"]
 
 [ext_resource type="Texture2D" uid="uid://clpewyt66tdrh" path="res://assets/test-tilemap.png" id="2_c5opo"]
 [ext_resource type="PackedScene" uid="uid://cqjo6g66ejlhb" path="res://node/player.tscn" id="2_jj7ry"]
+[ext_resource type="Script" path="res://script/resource/player_stats.gd" id="3_6dgyn"]
 [ext_resource type="Script" path="res://script/camera.gd" id="3_tgf57"]
-[ext_resource type="Theme" uid="uid://bf7qgtw7s4el4" path="res://assets/theme.tres" id="3_vwnh1"]
-[ext_resource type="Script" path="res://script/debug_hud.gd" id="5_hmocb"]
 [ext_resource type="Script" path="res://script/resource/flammable.gd" id="5_ipf83"]
+[ext_resource type="Script" path="res://script/resource/explosible.gd" id="5_rf24s"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ojoes"]
 resource_name = "test"
@@ -113,11 +113,18 @@ texture = ExtResource("2_c5opo")
 physics_layer_0/collision_layer = 128
 sources/0 = SubResource("TileSetAtlasSource_ojoes")
 
+[sub_resource type="Resource" id="Resource_ds4e2"]
+script = ExtResource("3_6dgyn")
+health = 100.0
+power = 100.0
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_78ckc"]
 size = Vector2(28, 42)
 
-[sub_resource type="Resource" id="Resource_n8yvy"]
-script = ExtResource("5_ipf83")
+[sub_resource type="Resource" id="Resource_hpsdv"]
+script = ExtResource("5_rf24s")
+power = 10
+explosion_spread = 16
 burn_time = 5.0
 spread = 15.0
 
@@ -130,13 +137,13 @@ script = ExtResource("5_ipf83")
 burn_time = 5.0
 spread = 10.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_jylim"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_f85oy"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_r06h2"]
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_w6j3s"]
 
-[node name="Node2D" type="Node2D"]
+[node name="World" type="Node2D"]
 
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_1vcx8")
@@ -145,6 +152,7 @@ layer_0/tile_data = PackedInt32Array(327667, 0, 0, 327668, 0, 0, 327669, 0, 0, 3
 
 [node name="Player" parent="." instance=ExtResource("2_jj7ry")]
 position = Vector2(-197, 49)
+stats = SubResource("Resource_ds4e2")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 script = ExtResource("3_tgf57")
@@ -158,10 +166,10 @@ shape = SubResource("RectangleShape2D_78ckc")
 debug_color = Color(1, 1, 1, 0.42)
 
 [node name="FlammableStaticBody2D" type="StaticBody2D" parent="."]
-position = Vector2(-103, 49)
+position = Vector2(-102, 40)
 collision_layer = 2
 collision_mask = 3
-metadata/flammability = SubResource("Resource_n8yvy")
+metadata/explosibility = SubResource("Resource_hpsdv")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="FlammableStaticBody2D"]
 shape = SubResource("RectangleShape2D_ylkbn")
@@ -170,26 +178,15 @@ shape = SubResource("RectangleShape2D_ylkbn")
 scale = Vector2(20, 20)
 mesh = SubResource("BoxMesh_3o7d0")
 
-[node name="RichTextLabel" type="RichTextLabel" parent="."]
-offset_left = -210.0
-offset_top = -120.0
-offset_right = -69.0
-offset_bottom = -56.0
-theme = ExtResource("3_vwnh1")
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_outline_size = 0
-text = "Health:"
-script = ExtResource("5_hmocb")
-
 [node name="RigidBody2D" type="RigidBody2D" parent="."]
-position = Vector2(-127, 27)
+position = Vector2(-103, 14)
 collision_layer = 2
 collision_mask = 131
 mass = 0.001
 metadata/flammability = SubResource("Resource_wsj0h")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RigidBody2D"]
-shape = SubResource("CircleShape2D_jylim")
+shape = SubResource("RectangleShape2D_f85oy")
 
 [node name="MeshInstance2D" type="MeshInstance2D" parent="RigidBody2D"]
 scale = Vector2(20, 20)

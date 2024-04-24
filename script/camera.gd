@@ -19,6 +19,5 @@ func _process(_delta: float) -> void:
 
 
 func _on_player_exited(body: Node2D) -> void:
-	print("Exited")
 	if body == follow_node:
 		following = true
